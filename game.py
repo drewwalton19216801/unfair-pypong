@@ -39,6 +39,7 @@ LEFT_SCORE = 0
 # right player score
 RIGHT_SCORE = 0
 NEW_GAME = True
+BALL_ACCELERATION = 0.005
 
 # function to draw the ball
 def draw_ball():
@@ -116,8 +117,22 @@ def check_ball_wall_collision():
         LEFT_SCORE += 1
 
 def move_ball(paused = False):
-    BALL_COORDINATES[0] += BALL_SPEED[0]
-    BALL_COORDINATES[1] += BALL_SPEED[1]
+    global BALL_PAUSED
+    # if the ball is not paused, move it
+    if not paused:
+        # if X speed is left, accellerate the ball left
+        if BALL_SPEED[0] < 0:
+            BALL_SPEED[0] -= BALL_ACCELERATION
+        # if X speed is right, accellerate the ball right
+        elif BALL_SPEED[0] > 0:
+            BALL_SPEED[0] += BALL_ACCELERATION
+        # move the ball
+        BALL_COORDINATES[0] += BALL_SPEED[0]
+        BALL_COORDINATES[1] += BALL_SPEED[1]
+    # if the ball is paused, move it to the center of the screen
+    else:
+        BALL_COORDINATES[0] = 400
+        BALL_COORDINATES[1] = 300
     check_ball_paddle_collision()
     check_ball_wall_collision()
 
@@ -132,21 +147,6 @@ def draw_right_score():
     font = pygame.font.Font(None, 36)
     text = font.render(str(RIGHT_SCORE), True, BLACK)
     screen.blit(text, [780, 10])
-
-def init_game():
-    # initialize the game
-    global BALL_PAUSED
-    BALL_PAUSED = False
-    global LEFT_SCORE
-    LEFT_SCORE = 0
-    global RIGHT_SCORE
-    RIGHT_SCORE = 0
-    # initialize the ball to the center of the screen
-    BALL_COORDINATES[0] = 400
-    BALL_COORDINATES[1] = 300
-    # make the ball move to the left by default
-    BALL_SPEED[0] = -5
-    BALL_SPEED[1] = random.choice([-5, 5])
 
 
 # run the game loop
